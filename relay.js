@@ -1,4 +1,4 @@
-import { createServer } from "net";
+import { createServer, Socket } from "net";
 import { config } from "./config.js";
 import Logger from "@ptkdev/logger";
 
@@ -30,7 +30,7 @@ class Auth {
     try {
       const opcode = await data.readUInt8(0);
       if (opcode !== 0x00 && opcode !== 0x02) {
-        console.log(`Unknown command: ${opcode}`);
+        debug.log(`Unknown command: ${opcode}`);
         return false;
       }
 
@@ -114,6 +114,48 @@ class Auth {
   }
 }
 
+class ClientSocket {
+  socket = null;
+  type = null;
+  hasError = false;
+  constructor(type) {
+    this.type = type;
+  }
+
+  async Connect(ip, port) {
+    try {
+      this.socket = new Socket();
+      await this.socket.connect(port, ip, () => {
+        logger.info(`Connected to ${this.type} server ${ip}:${port}`);
+      });
+
+      this.socket.on("error", (error) => {
+        this.hasError = true;
+        logger.error(`Error in Connect: ${error}`);
+      });
+
+      this.socket.on("data", (data) => {});
+
+      return true;
+    } catch (error) {
+      logger.error(`Error in Connect: ${error}`);
+    }
+
+    return false;
+  }
+
+  async SendBuffer(buffer) {
+    try {
+      if (this.socket) {
+        await this.socket.write(buffer);
+        return true;
+      }
+    } catch (error) {
+      logger.error(`Error in SendBuffer: ${error}`);
+    }
+  }
+}
+
 auth_server.on("connection", (socket) => {
   socket.UserIP = socket.remoteAddress.includes("::ffff:")
     ? socket.remoteAddress.replace("::ffff:", "")
@@ -136,7 +178,9 @@ auth_server.on("connection", (socket) => {
   }
 
   socket.on("data", async (data) => {
-    if (socket.state === "auth") {
+    const opcode = data.readUInt8(0);
+
+    if (opcode == 0x00 || opcode == 0x02) {
       const auth_challenge_data =
         await auth.CMD_AUTH_LOGON_CHALLENGE_SERVER_VALIDATE_CLIENT_REQUEST(
           data
@@ -144,7 +188,37 @@ auth_server.on("connection", (socket) => {
 
       if (auth_challenge_data) {
         socket.state = "auth_challenge_1";
-        socket.offset = auth_challenge_data.challenge_end_offset;
+
+        let relay_packet = Buffer.alloc(
+          config.secret_key.length + socket.UserIP.length + 9
+        );
+        relay_packet.writeUInt8(0x40, 0);
+        relay_packet.writeUInt32LE(config.secret_key.length, 1);
+        relay_packet.write(config.secret_key, 5);
+        relay_packet.writeUInt32LE(
+          socket.UserIP.length,
+          5 + config.secret_key.length
+        );
+        relay_packet.write(socket.UserIP, 5 + config.secret_key.length + 4);
+
+        const socket_client = new ClientSocket("realm");
+        const connect_status = await socket_client.Connect(
+          config.main_server_auth.host,
+          config.main_server_auth.port
+        );
+
+        if (!connect_status || socket_client.hasError) {
+          logger.error("Error connecting to main server");
+          endSession();
+        }
+
+        socket_client.socket.on("error", (error) => {
+          logger.error(`Socket error: ${error}`);
+          endSession();
+        });
+
+        await socket_client.SendBuffer(relay_packet);
+        await socket_client.SendBuffer(data);
       } else {
         logger.error("Invalid packet, closing connection");
         endSession();
