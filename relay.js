@@ -26,18 +26,12 @@ const logger = new Logger(options);
 const auth_server = createServer();
 
 class Auth {
-  constructor(socket) {
-    this.socket = socket;
-    this.state = "auth";
-  }
-
   async CMD_AUTH_LOGON_CHALLENGE_SERVER_VALIDATE_CLIENT_REQUEST(data) {
     try {
       const opcode = await data.readUInt8(0);
       if (opcode !== 0x00 && opcode !== 0x02) {
         console.log(`Unknown command: ${opcode}`);
-        this.socket.end();
-        return;
+        return false;
       }
 
       const protocol_version = await data.readUInt8(0x01);
@@ -78,32 +72,42 @@ class Auth {
 
       if (version !== config.game_version) {
         logger.error(`Invalid game version: ${version}`);
-        this.socket.end();
-        return;
+        return false;
       }
 
       if (build !== config.build) {
         logger.error(`Invalid build: ${build}`);
-        this.socket.end();
-        return;
+        return false;
       }
 
       if (!username_length) {
         logger.error(`Invalid username length: ${username_length}`);
-        this.socket.end();
-        return;
+        return false;
       }
 
       if (username_length + 0x22 - 4 !== packet_size) {
         logger.error(`Invalid packet size: ${packet_size}`);
-        this.socket.end();
-        return;
+        return false;
       }
 
-      return 0x22 + username_length;
+      return {
+        challenge_end_offset: username_length + 0x22,
+        opcode: opcode,
+        protocol_version: protocol_version,
+        packet_size: packet_size,
+        version: version,
+        build: build,
+        platform: platform,
+        os: os,
+        locale: locale,
+        timezone_bias: timezone_bias,
+        ip: ip,
+        username_length: username_length,
+        username: username,
+        payload: data.slice(0x00, 0x22 + username_length),
+      };
     } catch (error) {
       logger.error(`Error in CMD_AUTH_LOGON_CHALLENGE_SERVER: ${error}`);
-      this.socket.end();
     }
 
     return false;
@@ -120,18 +124,30 @@ auth_server.on("connection", (socket) => {
   socket.offset = 0;
   const auth = new Auth(socket);
 
+  setTimeout(() => {
+    if (socket.state === "auth") {
+      logger.error("Session timed out, closing connection");
+      endSession();
+    }
+  }, 5000);
+
+  async function endSession() {
+    socket.end();
+  }
+
   socket.on("data", async (data) => {
     if (socket.state === "auth") {
-      const challenge_end_offset =
+      const auth_challenge_data =
         await auth.CMD_AUTH_LOGON_CHALLENGE_SERVER_VALIDATE_CLIENT_REQUEST(
           data
         );
-      if (challenge_end_offset) {
-        socket.state = "auth_logon";
-        socket.offset = challenge_end_offset;
+
+      if (auth_challenge_data) {
+        socket.state = "auth_challenge_1";
+        socket.offset = auth_challenge_data.challenge_end_offset;
       } else {
         logger.error("Invalid packet, closing connection");
-        socket.end();
+        endSession();
       }
     }
   });
