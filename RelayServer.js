@@ -32,6 +32,9 @@ class RelayServer {
     this.config = config;
 
     this.auth_server = Net.createServer((socket) => {
+      this.logger.info(
+        `New connection from ${socket.remoteAddress} to auth server`
+      );
       let session = new AuthSession(config, socket, this.logger);
       session.run();
     });
@@ -43,7 +46,13 @@ class RelayServer {
           `New connection from ${socket.remoteAddress} to realm "${realm.realm_name}"`
         );
 
-        let session = new RealmSession(config, socket, this.logger);
+        let session = new RealmSession(
+          realm.realm_id,
+          realm,
+          config,
+          socket,
+          this.logger
+        );
         session.run();
       });
     }

@@ -18,7 +18,8 @@ export const config = {
     {
       realm_id: 1, // Realm ID
       realm_name: "Realm 1", // Realm name
-      realm_port: 8085, // Realm Port
+      realm_ip: "192.168.32.32", // Realm IP
+      realm_port: 990, // Realm Port
     },
   ],
 };
