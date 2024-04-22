@@ -1,3 +1,7 @@
+// Developed by: Amin.MasterkinG (https://masterking32.com)
+// Github: https://github.com/masterking32/WoW-Server-Relay
+// Year: 2024
+
 import Logger from "@ptkdev/logger";
 import Net from "net";
 import AuthSession from "./AuthSession.js";

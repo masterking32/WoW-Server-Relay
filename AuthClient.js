@@ -1,3 +1,7 @@
+// Developed by: Amin.MasterkinG (https://masterking32.com)
+// Github: https://github.com/masterking32/WoW-Server-Relay
+// Year: 2024
+
 import Net from "net";
 import { RELAY_SERVER_CMD } from "./opcodes.js";
 
@@ -9,6 +13,7 @@ class AuthClient {
     this.secret_key = secret_key;
     this.client_ip = client_ip;
     this.authChallengePayload = authChallengePayload;
+    this.isReady = false;
   }
 
   run() {
@@ -28,6 +33,8 @@ class AuthClient {
       this.socket.write(relay_packet);
 
       this.socket.write(this.authChallengePayload);
+
+      this.isReady = true;
     });
   }
 

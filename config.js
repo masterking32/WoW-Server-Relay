@@ -1,3 +1,7 @@
+// Developed by: Amin.MasterkinG (https://masterking32.com)
+// Github: https://github.com/masterking32/WoW-Server-Relay
+// Year: 2024
+
 export const config = {
   log_level: "info", // Log Level: debug, info, warning, error
   game_version: "3.3.5", // Game Version: 1.12.1, 2.4.3, 3.3.5 based on game version and packet structure

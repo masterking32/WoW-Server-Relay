@@ -1,3 +1,7 @@
+// Developed by: Amin.MasterkinG (https://masterking32.com)
+// Github: https://github.com/masterking32/WoW-Server-Relay
+// Year: 2024
+
 // Opcodes and packets https://wowdev.wiki/Login_Packet
 export const CMD_AUTH_LOGON_CHALLENGE = 0x00;
 export const CMD_AUTH_LOGON_PROOF = 0x01;

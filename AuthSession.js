@@ -1,3 +1,7 @@
+// Developed by: Amin.MasterkinG (https://masterking32.com)
+// Github: https://github.com/masterking32/WoW-Server-Relay
+// Year: 2024
+
 import AuthClient from "./AuthClient.js";
 import { CMD_AUTH_LOGON_CHALLENGE, RELAY_SERVER_CMD } from "./opcodes.js";
 
