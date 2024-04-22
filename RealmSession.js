@@ -37,6 +37,7 @@ class RealmSession {
         this.logger.error("[RealmSession] Client is not ready yet");
         return;
       }
+      this.logger.debug(`[RealmSession] Received ${data.length} bytes`);
       this.client.socket.write(data);
     });
 

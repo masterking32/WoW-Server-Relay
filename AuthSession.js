@@ -169,7 +169,7 @@ class AuthSession {
       0x22 + username_length - position
     );
 
-    this.logger.info(
+    this.logger.debug(
       `[AuthSession] Protocol Version: ${protocol_version}, Packet Size: ${packet_size}, Game Name: ${game_name}, Version: ${version}, Build: ${build}, Platform: ${platform
         .split("")
         .reverse()
@@ -236,7 +236,7 @@ class AuthSession {
       8 + secret_key_length + client_ip_length
     );
 
-    this.logger.info(
+    this.logger.debug(
       `[AuthSession] Secret Key Length: ${secret_key_length}, Secret Key: ${secret_key}, Client IP Length: ${client_ip_length}, Client IP: ${client_ip}`
     );
 
