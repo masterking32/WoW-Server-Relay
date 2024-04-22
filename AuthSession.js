@@ -7,6 +7,7 @@ import {
   CMD_AUTH_LOGON_CHALLENGE,
   RELAY_SERVER_CMD,
   CMD_AUTH_LOGON_PROOF,
+  CMD_REALM_LIST,
 } from "./opcodes.js";
 
 class AuthSession {
@@ -74,13 +75,10 @@ class AuthSession {
         };
 
         this.client = new AuthClient(
-          this.config.main_server_auth.host,
-          this.config.main_server_auth.port,
-          this.config.secret_key,
+          this.config,
           this.ClientIP,
           AuthChallengePayload,
           this.logger,
-          this.config.send_relay_packet,
           this.onClientStop,
           this.onClientData
         );
@@ -102,6 +100,14 @@ class AuthSession {
           this.stop();
         }
 
+        position = data.length;
+        break;
+      case CMD_REALM_LIST:
+        this.logger.debug("[AuthSession] Realm list");
+        const packet = Buffer.alloc(data.length + 1);
+        packet.writeUInt8(CMD_REALM_LIST, 0);
+        data.copy(packet, 1);
+        this.client.WriteData(packet);
         position = data.length;
         break;
       case RELAY_SERVER_CMD:

@@ -13,6 +13,7 @@ export const config = {
     host: "192.168.32.32", // Main Server Auth Host
     port: 3724, // Main Server Auth Port
   },
+  relay_ip: "127.0.0.1", // Relay Public IP
   realms: [
     {
       realm_id: 1, // Realm ID

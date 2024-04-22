@@ -7,31 +7,23 @@ import {
   RELAY_SERVER_CMD,
   CMD_AUTH_LOGON_CHALLENGE,
   CMD_AUTH_LOGON_PROOF,
+  CMD_REALM_LIST,
 } from "./opcodes.js";
 
 class AuthClient {
-  constructor(
-    ip,
-    port,
-    secret_key,
-    client_ip,
-    authChallengePayload,
-    logger,
-    send_relay_packet,
-    onStop,
-    onData
-  ) {
-    this.ip = ip;
-    this.port = port;
+  constructor(config, client_ip, authChallengePayload, logger, onStop, onData) {
+    this.ip = config.main_server_auth.host;
+    this.port = config.main_server_auth.port;
     this.logger = logger;
-    this.secret_key = secret_key;
+    this.secret_key = config.secret_key;
     this.client_ip = client_ip;
     this.authChallengePayload = authChallengePayload;
-    this.send_relay_packet = send_relay_packet;
+    this.send_relay_packet = config.send_relay_packet;
     this.onStop = onStop;
     this.onData = onData;
     this.isReady = false;
     this.isEnded = false;
+    this.config = config;
   }
 
   run() {
@@ -111,6 +103,15 @@ class AuthClient {
         }
         position = AuthLogonProofResponse.position;
         break;
+
+      case CMD_REALM_LIST:
+        this.logger.debug(`[AuthClient] Received Realm List`);
+        const RealmListResponse = await this.HandleRealmList(data);
+        if (!RealmListResponse) {
+          this.stop();
+        }
+        position = RealmListResponse.position;
+        break;
       default:
         this.logger.error(`[AuthClient] Unknown opcode: ${opcode}`);
         this.stop();
@@ -141,9 +142,6 @@ class AuthClient {
       }, 500);
       return false;
     }
-
-    let position = data.length;
-    return { position: position, payload: packet };
   }
 
   async HandleAuthLogonChallenge(data) {
@@ -181,6 +179,76 @@ class AuthClient {
     }
 
     return false;
+  }
+
+  async HandleRealmList(data) {
+    this.logger.debug("[AuthClient] Handling Realm List");
+    let position = 1;
+    const size = data.readUInt8(0x1 - position);
+    const realm_count = data.readUInt8(0x7 - position);
+
+    this.logger.debug(
+      `[AuthClient] Realm Count: ${realm_count}, size: ${size}, packetSize: ${data.length}`
+    );
+
+    let new_data = data;
+
+    position = 0x7;
+    for (let i = 0; i < realm_count; i++) {
+      let realmName = "";
+      position = 0x4 + position;
+      while (data.readUInt8(position) !== 0) {
+        realmName += String.fromCharCode(data.readUInt8(position));
+        position++;
+      }
+
+      position++;
+      let address_port = "";
+      let start_address_position = position;
+      let end_address_position = position;
+      while (data.readUInt8(position) !== 0) {
+        address_port += String.fromCharCode(data.readUInt8(position));
+        if (String.fromCharCode(data.readUInt8(position)) == ":") {
+          end_address_position = position;
+        }
+        position++;
+      }
+
+      position += 7;
+      const realm_id = data.readUInt8(position);
+      position += 1;
+
+      this.logger.debug(
+        `[AuthClient] Realm Name: ${realmName}, Address: ${address_port}, Realm ID: ${realm_id}`
+      );
+
+      let new_address_port = this.config.relay_ip;
+
+      let different_length =
+        new_address_port.length -
+        (end_address_position - start_address_position);
+      let temp_packet = Buffer.alloc(new_data.length + different_length);
+      new_data.copy(temp_packet, 0, 0, start_address_position);
+      temp_packet.write(new_address_port, start_address_position);
+      new_data.copy(
+        temp_packet,
+        start_address_position + new_address_port.length,
+        end_address_position
+      );
+
+      temp_packet.writeUInt8(temp_packet.length - 2, 0);
+      new_data = temp_packet;
+
+      if (size === position) {
+        break;
+      }
+    }
+
+    const new_packet = Buffer.alloc(new_data.length + 1);
+    new_packet.writeUInt8(CMD_REALM_LIST, 0);
+    new_data.copy(new_packet, 1, 0);
+    this.onData(new_packet);
+    return { position: data.length, payload: new_packet };
   }
 
   onSocketError(error) {
