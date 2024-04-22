@@ -6,6 +6,7 @@
   "type": "module",
   "author": "masterking32",
   "dependencies": {
-    "@ptkdev/logger": "^1.8.0"
+    "@ptkdev/logger": "^1.8.0",
+    "promise-socket": "^7.0.0"
   }
 }
