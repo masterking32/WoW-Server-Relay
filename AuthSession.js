@@ -3,7 +3,11 @@
 // Year: 2024
 
 import AuthClient from "./AuthClient.js";
-import { CMD_AUTH_LOGON_CHALLENGE, RELAY_SERVER_CMD } from "./opcodes.js";
+import {
+  CMD_AUTH_LOGON_CHALLENGE,
+  RELAY_SERVER_CMD,
+  CMD_AUTH_LOGON_PROOF,
+} from "./opcodes.js";
 
 class AuthSession {
   constructor(config, socket, logger) {
@@ -26,6 +30,7 @@ class AuthSession {
 
   async onSocketData(data) {
     let bytes = data.length;
+    this.logger.debug(`[AuthSession] Received ${data.length} bytes`);
     let position = 0;
     while (bytes > 0) {
       const opcode = data.readUInt8(position);
@@ -83,6 +88,22 @@ class AuthSession {
         this.client.run();
         break;
 
+      case CMD_AUTH_LOGON_PROOF:
+        this.logger.debug("[AuthSession] Auth logon proof");
+        if (this.client) {
+          const packet = Buffer.alloc(data.length + 1);
+          packet.writeUInt8(CMD_AUTH_LOGON_PROOF, 0);
+          data.copy(packet, 1);
+          this.client.WriteData(packet);
+        } else {
+          this.logger.error(
+            "[AuthSession] Auth logon proof received without client"
+          );
+          this.stop();
+        }
+
+        position = data.length;
+        break;
       case RELAY_SERVER_CMD:
         this.logger.debug("[AuthSession] Relay server command");
         const RelayServerResponse = await this.HandleRelayServerCommand(data);
@@ -93,7 +114,6 @@ class AuthSession {
 
         position = RelayServerResponse.position;
         break;
-
       default:
         this.logger.error(`[AuthSession] Unknown opcode ${opcode}`);
         this.stop();

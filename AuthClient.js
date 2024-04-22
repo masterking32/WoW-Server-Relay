@@ -3,7 +3,11 @@
 // Year: 2024
 
 import Net from "net";
-import { RELAY_SERVER_CMD, CMD_AUTH_LOGON_CHALLENGE } from "./opcodes.js";
+import {
+  RELAY_SERVER_CMD,
+  CMD_AUTH_LOGON_CHALLENGE,
+  CMD_AUTH_LOGON_PROOF,
+} from "./opcodes.js";
 
 class AuthClient {
   constructor(
@@ -98,13 +102,48 @@ class AuthClient {
         }
 
         position = ChallengeResponse.position;
-        return position;
+        break;
+      case CMD_AUTH_LOGON_PROOF:
+        this.logger.debug(`[AuthClient] Received Auth Logon Proof`);
+        const AuthLogonProofResponse = await this.HandleAuthLogonProof(data);
+        if (!AuthLogonProofResponse) {
+          this.stop();
+        }
+        position = AuthLogonProofResponse.position;
         break;
       default:
         this.logger.error(`[AuthClient] Unknown opcode: ${opcode}`);
         this.stop();
+        position = false;
         break;
     }
+
+    return position;
+  }
+
+  async HandleAuthLogonProof(data) {
+    this.logger.debug("[AuthClient] Handling Auth Logon Proof");
+    const packet = Buffer.alloc(1 + data.length);
+    packet.writeUInt8(CMD_AUTH_LOGON_PROOF, 0);
+    data.copy(packet, 1, 0);
+    const result = data.readUInt8(0x0);
+    this.logger.debug(`[AuthClient] Auth Logon Proof Result: ${result}`);
+    if (result === 0x00) {
+      // success
+      this.onData(packet);
+      let position = data.length;
+      return { position: position, payload: packet };
+    } else {
+      // fail
+      this.onData(packet);
+      setTimeout(() => {
+        this.stop();
+      }, 500);
+      return false;
+    }
+
+    let position = data.length;
+    return { position: position, payload: packet };
   }
 
   async HandleAuthLogonChallenge(data) {
@@ -143,6 +182,7 @@ class AuthClient {
 
     return false;
   }
+
   onSocketError(error) {
     this.logger.error(`[AuthClient] Error: ${error.message}`);
     this.stop();
