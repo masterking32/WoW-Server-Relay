@@ -14,6 +14,7 @@ class AuthSession {
     this.ClientIP = socket.remoteAddress.includes("::ffff:")
       ? socket.remoteAddress.replace("::ffff:", "")
       : socket.remoteAddress;
+    this.isEnded = false;
   }
 
   run() {
@@ -50,6 +51,7 @@ class AuthSession {
         if (!ChallengeResponse) {
           this.stop();
         }
+
         position = ChallengeResponse.position;
         let AuthChallengePayload = Buffer.alloc(
           ChallengeResponse.payload.length + 1
@@ -57,20 +59,32 @@ class AuthSession {
         AuthChallengePayload.writeUInt8(0x00, 0);
         ChallengeResponse.payload.copy(AuthChallengePayload, 1);
 
+        this.onClientStop = () => {
+          this.stop();
+        };
+
+        this.onClientData = (data) => {
+          this.socket.write(data);
+          this.logger.debug(`[AuthSession] Sent ${data.toString("hex")}`);
+        };
+
         this.client = new AuthClient(
           this.config.main_server_auth.host,
           this.config.main_server_auth.port,
           this.config.secret_key,
           this.ClientIP,
           AuthChallengePayload,
-          this.logger
+          this.logger,
+          this.config.send_relay_packet,
+          this.onClientStop,
+          this.onClientData
         );
 
         this.client.run();
         break;
 
       case RELAY_SERVER_CMD:
-        this.logger.debug("Relay server command");
+        this.logger.debug("[AuthSession] Relay server command");
         const RelayServerResponse = await this.HandleRelayServerCommand(data);
 
         if (!RelayServerResponse) {
@@ -81,7 +95,7 @@ class AuthSession {
         break;
 
       default:
-        this.logger.error(`Unknown opcode ${opcode}`);
+        this.logger.error(`[AuthSession] Unknown opcode ${opcode}`);
         this.stop();
     }
 
@@ -130,7 +144,7 @@ class AuthSession {
     );
 
     this.logger.info(
-      `Protocol Version: ${protocol_version}, Packet Size: ${packet_size}, Game Name: ${game_name}, Version: ${version}, Build: ${build}, Platform: ${platform
+      `[AuthSession] Protocol Version: ${protocol_version}, Packet Size: ${packet_size}, Game Name: ${game_name}, Version: ${version}, Build: ${build}, Platform: ${platform
         .split("")
         .reverse()
         .join("")}, OS: ${os.split("").reverse().join("")}, Locale: ${locale
@@ -142,21 +156,23 @@ class AuthSession {
     );
 
     if (version !== this.config.game_version) {
-      this.logger.error(`Invalid game version: ${version}`);
+      this.logger.error(`[AuthSession] Invalid version: ${version}`);
       return false;
     }
 
     if (build !== this.config.build) {
-      this.logger.error(`Invalid build: ${build}`);
+      this.logger.error(`[AuthSession] Invalid build: ${build}`);
       return false;
     }
     if (!username_length) {
-      this.logger.error(`Invalid username length: ${username_length}`);
+      this.logger.error(
+        `[AuthSession] Invalid username length: ${username_length}`
+      );
       return false;
     }
 
     if (username_length + 0x22 - 4 !== packet_size) {
-      this.logger.error(`Invalid packet size: ${packet_size}`);
+      this.logger.error(`[AuthSession] Invalid packet size: ${packet_size}`);
       return false;
     }
 
@@ -195,11 +211,11 @@ class AuthSession {
     );
 
     this.logger.info(
-      `Secret Key Length: ${secret_key_length}, Secret Key: ${secret_key}, Client IP Length: ${client_ip_length}, Client IP: ${client_ip}`
+      `[AuthSession] Secret Key Length: ${secret_key_length}, Secret Key: ${secret_key}, Client IP Length: ${client_ip_length}, Client IP: ${client_ip}`
     );
 
     if (secret_key !== this.config.secret_key) {
-      this.logger.error("Invalid secret key");
+      this.logger.error("[AuthSession] Invalid secret key");
       this.stop();
     }
 
@@ -213,20 +229,29 @@ class AuthSession {
 
     return output;
   }
+
   onSocketClose() {
-    this.logger.debug("AuthSession closed");
+    this.logger.debug("[AuthSession] Connection closed");
     this.stop();
   }
-  onSocketError() {
-    this.logger.debug("AuthSession error");
+
+  onSocketError(error) {
+    this.logger.debug("[AuthSession] Connection error: " + error.message);
     this.stop();
   }
   onSocketTimeout() {
-    this.logger.debug("AuthSession timeout");
+    this.logger.debug("[AuthSession] Connection timeout");
     this.stop();
   }
 
   stop() {
+    if (this.isEnded) {
+      return;
+    }
+
+    this.logger.debug("[AuthSession] Stopping session");
+    this.isEnded = true;
+
     if (this.client) {
       this.client.stop();
     }
