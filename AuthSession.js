@@ -5,7 +5,7 @@
 import AuthClient from "./AuthClient.js";
 import {
   CMD_AUTH_LOGON_CHALLENGE,
-  RELAY_SERVER_CMD,
+  RELAY_SERVER_CMD_AUTH,
   CMD_AUTH_LOGON_PROOF,
   CMD_REALM_LIST,
 } from "./opcodes.js";
@@ -110,7 +110,7 @@ class AuthSession {
         this.client.WriteData(packet);
         position = data.length;
         break;
-      case RELAY_SERVER_CMD:
+      case RELAY_SERVER_CMD_AUTH:
         this.logger.debug("[AuthSession] Relay server command");
         const RelayServerResponse = await this.HandleRelayServerCommand(data);
 
