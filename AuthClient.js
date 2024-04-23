@@ -9,6 +9,8 @@ import {
   CMD_AUTH_RECONNECT_CHALLENGE,
   CMD_AUTH_RECONNECT_PROOF,
   CMD_REALM_LIST,
+  CMD_XFER_DATA,
+  CMD_XFER_INITIATE,
   RELAY_SERVER_CMD_AUTH,
 } from "./opcodes.js";
 
@@ -121,6 +123,14 @@ class AuthClient {
           this.stop();
         }
         position = RealmListResponse.position;
+        break;
+      case CMD_XFER_INITIATE:
+      case CMD_XFER_DATA:
+        const packet = Buffer.alloc(1 + data.length);
+        packet.writeUInt8(opcode, 0);
+        data.copy(packet, 1, 0);
+        this.onData(packet);
+        position = data.length;
         break;
       default:
         this.logger.error(`[AuthClient] Unknown opcode: ${opcode}`);

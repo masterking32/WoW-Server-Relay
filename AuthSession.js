@@ -9,9 +9,12 @@ import {
   CMD_AUTH_RECONNECT_CHALLENGE,
   CMD_AUTH_RECONNECT_PROOF,
   CMD_REALM_LIST,
+  CMD_SURVEY_RESULT,
+  CMD_XFER_ACCEPT,
+  CMD_XFER_CANCEL,
+  CMD_XFER_RESUME,
   RELAY_SERVER_CMD_AUTH,
 } from "./opcodes.js";
-
 class AuthSession {
   constructor(config, socket, logger) {
     this.config = config;
@@ -122,6 +125,20 @@ class AuthSession {
         }
 
         position = RelayServerResponse.position;
+        break;
+      case CMD_XFER_ACCEPT:
+      case CMD_XFER_RESUME:
+      case CMD_XFER_CANCEL:
+      case CMD_SURVEY_RESULT:
+        position = data.length;
+        if (this.client) {
+          const packet = Buffer.alloc(data.length + 1);
+          packet.writeUInt8(opcode, 0);
+          data.copy(packet, 1);
+          this.client.WriteData(packet);
+        } else {
+          this.stop();
+        }
         break;
       default:
         this.logger.error(`[AuthSession] Unknown opcode ${opcode}`);
