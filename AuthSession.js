@@ -5,9 +5,11 @@
 import AuthClient from "./AuthClient.js";
 import {
   CMD_AUTH_LOGON_CHALLENGE,
-  RELAY_SERVER_CMD_AUTH,
   CMD_AUTH_LOGON_PROOF,
+  CMD_AUTH_RECONNECT_CHALLENGE,
+  CMD_AUTH_RECONNECT_PROOF,
   CMD_REALM_LIST,
+  RELAY_SERVER_CMD_AUTH,
 } from "./opcodes.js";
 
 class AuthSession {
@@ -53,6 +55,7 @@ class AuthSession {
     let position = 0;
     switch (opcode) {
       case CMD_AUTH_LOGON_CHALLENGE:
+      case CMD_AUTH_RECONNECT_CHALLENGE:
         const ChallengeResponse = await this.HandleAuthLogonChallenge(data);
         if (!ChallengeResponse) {
           this.stop();
@@ -62,7 +65,7 @@ class AuthSession {
         let AuthChallengePayload = Buffer.alloc(
           ChallengeResponse.payload.length + 1
         );
-        AuthChallengePayload.writeUInt8(0x00, 0);
+        AuthChallengePayload.writeUInt8(opcode, 0);
         ChallengeResponse.payload.copy(AuthChallengePayload, 1);
 
         this.onClientStop = () => {
@@ -85,12 +88,12 @@ class AuthSession {
 
         this.client.run();
         break;
-
       case CMD_AUTH_LOGON_PROOF:
+      case CMD_AUTH_RECONNECT_PROOF:
         this.logger.debug("[AuthSession] Auth logon proof");
         if (this.client) {
           const packet = Buffer.alloc(data.length + 1);
-          packet.writeUInt8(CMD_AUTH_LOGON_PROOF, 0);
+          packet.writeUInt8(opcode, 0);
           data.copy(packet, 1);
           this.client.WriteData(packet);
         } else {
@@ -216,10 +219,9 @@ class AuthSession {
       timezone_bias: timezone_bias,
       ip: ip,
       position: position,
-      payload: data.slice(0x00, position),
+      payload: data,
     };
 
-    this.logger.debug(output);
     return output;
   }
 

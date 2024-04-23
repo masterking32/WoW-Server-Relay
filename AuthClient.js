@@ -4,10 +4,12 @@
 
 import Net from "net";
 import {
-  RELAY_SERVER_CMD_AUTH,
   CMD_AUTH_LOGON_CHALLENGE,
   CMD_AUTH_LOGON_PROOF,
+  CMD_AUTH_RECONNECT_CHALLENGE,
+  CMD_AUTH_RECONNECT_PROOF,
   CMD_REALM_LIST,
+  RELAY_SERVER_CMD_AUTH,
 } from "./opcodes.js";
 
 class AuthClient {
@@ -88,7 +90,11 @@ class AuthClient {
     this.logger.debug(`[AuthClient] Opcode: ${opcode}`);
     switch (opcode) {
       case CMD_AUTH_LOGON_CHALLENGE:
-        const ChallengeResponse = await this.HandleAuthLogonChallenge(data);
+      case CMD_AUTH_RECONNECT_CHALLENGE:
+        const ChallengeResponse = await this.HandleAuthLogonChallenge(
+          opcode,
+          data
+        );
         if (!ChallengeResponse) {
           this.stop();
         }
@@ -96,8 +102,12 @@ class AuthClient {
         position = ChallengeResponse.position;
         break;
       case CMD_AUTH_LOGON_PROOF:
+      case CMD_AUTH_RECONNECT_PROOF:
         this.logger.debug(`[AuthClient] Received Auth Logon Proof`);
-        const AuthLogonProofResponse = await this.HandleAuthLogonProof(data);
+        const AuthLogonProofResponse = await this.HandleAuthLogonProof(
+          opcode,
+          data
+        );
         if (!AuthLogonProofResponse) {
           this.stop();
         }
@@ -122,21 +132,21 @@ class AuthClient {
     return position;
   }
 
-  async HandleAuthLogonProof(data) {
+  async HandleAuthLogonProof(opcode, data) {
     this.logger.debug("[AuthClient] Handling Auth Logon Proof");
     const packet = Buffer.alloc(1 + data.length);
-    packet.writeUInt8(CMD_AUTH_LOGON_PROOF, 0);
+    packet.writeUInt8(opcode, 0);
     data.copy(packet, 1, 0);
+    this.onData(packet);
+
     const result = data.readUInt8(0x0);
     this.logger.debug(`[AuthClient] Auth Logon Proof Result: ${result}`);
     if (result === 0x00) {
       // success
-      this.onData(packet);
       let position = data.length;
       return { position: position, payload: packet };
     } else {
       // fail
-      this.onData(packet);
       setTimeout(() => {
         this.stop();
       }, 500);
@@ -144,38 +154,27 @@ class AuthClient {
     }
   }
 
-  async HandleAuthLogonChallenge(data) {
+  async HandleAuthLogonChallenge(opcode, data) {
     this.logger.debug("[AuthClient] Handling Auth Logon Challenge");
     let position = 1;
-    const protocol_version = data.readUInt8(0x1 - position);
-    const result = data.readUInt8(0x2 - position);
+    let result = data.readUInt8(0x1 - position);
+    if (CMD_AUTH_LOGON_CHALLENGE === opcode) {
+      result = data.readUInt8(0x2 - position);
+    }
 
+    this.logger.debug(`[AuthClient] Result: ${result}`);
+
+    const payload = Buffer.alloc(data.length + 1);
+    payload.writeUInt8(opcode, 0);
+    data.copy(payload, 1, 0);
     this.logger.debug(
-      `[AuthClient] Protocol Version: ${protocol_version} and Result: ${result}`
+      `[AuthClient] Auth Logon Challenge Payload: ${payload.toString("hex")}`
     );
+    this.onData(payload);
+
     if (result === 0x00) {
       // Success
-      const payload = Buffer.alloc(data.length + 1);
-      payload.writeUInt8(0, CMD_AUTH_LOGON_CHALLENGE);
-      data.copy(payload, 1, 0);
-      this.logger.debug(
-        `[AuthClient] Auth Logon Challenge Payload: ${payload.toString("hex")}`
-      );
-      this.onData(payload);
       return { position: payload.length - 1, payload: payload };
-    } else if (result >= 0x00 && result <= 0x10) {
-      let packetDisconnect = Buffer.alloc(1 + 1 + 1);
-      packetDisconnect.writeUInt8(CMD_AUTH_LOGON_CHALLENGE, 0);
-      packetDisconnect.writeUInt8(protocol_version, 1);
-      packetDisconnect.writeUInt8(result, 2);
-      this.onData(packetDisconnect);
-
-      setTimeout(() => {
-        this.stop();
-      }, 500);
-    } else {
-      this.logger.error(`[AuthClient] Unknown result: ${result}`);
-      this.stop();
     }
 
     return false;
