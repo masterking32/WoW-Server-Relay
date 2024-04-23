@@ -239,9 +239,11 @@ class AuthClient {
       temp_packet.writeUInt8(temp_packet.length - 2, 0);
       new_data = temp_packet;
 
-      if (size === position) {
+      if (size <= position) {
         break;
       }
+
+      position -= 1;
     }
 
     const new_packet = Buffer.alloc(new_data.length + 1);
