@@ -4,7 +4,7 @@
 
 import Net from "net";
 import {
-  RELAY_SERVER_CMD,
+  RELAY_SERVER_CMD_AUTH,
   CMD_AUTH_LOGON_CHALLENGE,
   CMD_AUTH_LOGON_PROOF,
   CMD_REALM_LIST,
@@ -34,7 +34,7 @@ class AuthClient {
         let relay_packet = Buffer.alloc(
           this.secret_key.length + this.client_ip.length + 9
         );
-        relay_packet.writeUInt8(RELAY_SERVER_CMD, 0);
+        relay_packet.writeUInt8(RELAY_SERVER_CMD_AUTH, 0);
         relay_packet.writeUInt32LE(this.secret_key.length, 1);
         relay_packet.write(this.secret_key, 5);
         relay_packet.writeUInt32LE(
