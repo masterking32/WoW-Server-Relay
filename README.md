@@ -106,6 +106,15 @@ This project reads and handles packets from the client for AuthServer and functi
    ```bash
    node app.js
    ```
+7. **Run as Service/Startup:**
+
+   ```bash
+   npm install pm2 -g
+   pm2 start app.js
+   pm2 startup
+   pm2 save
+   ```
+   
 
 ## Developer Information
 
