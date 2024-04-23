@@ -14,4 +14,5 @@ export const CMD_XFER_DATA = 0x31;
 export const CMD_XFER_ACCEPT = 0x32;
 export const CMD_XFER_RESUME = 0x33;
 export const CMD_XFER_CANCEL = 0x34;
-export const RELAY_SERVER_CMD = 0x64; // Custom opcode for relay server communication = 100
+export const RELAY_SERVER_CMD_AUTH = 0x64; // Custom opcode for auth relay server
+export const RELAY_SERVER_CMD_WORLD = 0xA32; // Custom opcode for world relay server
