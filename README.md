@@ -98,6 +98,7 @@ This project reads and handles packets from the client for AuthServer and functi
 5. **Configure the project:**
 
    ```bash
+   cp config.js.sample config.js
    nano config.js
    ```
 
@@ -106,6 +107,7 @@ This project reads and handles packets from the client for AuthServer and functi
    ```bash
    node app.js
    ```
+
 7. **Run as Service/Startup:**
 
    ```bash
@@ -114,7 +116,6 @@ This project reads and handles packets from the client for AuthServer and functi
    pm2 startup
    pm2 save
    ```
-   
 
 ## Developer Information
 
