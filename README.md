@@ -133,6 +133,10 @@ This project reads and handles packets from the client for AuthServer and functi
    pm2 save
    ```
 
+Note: For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
+
+---
+
 # Windows Installation:
 
 1. Download and install the latest version of [NodeJS](https://nodejs.org/en).
