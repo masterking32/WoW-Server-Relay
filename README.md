@@ -65,9 +65,9 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 
 #### Does TrinityCore/AzerothCore support this packet?
 
-Currently, no, and it hasn't been tested yet. However, in the future, we or others can test it and provide updates on how to modify your core to support this type of packet. These packets follow the same structure as other WoW packets. If your core doesn't have a handler for these packets, make sure `send_relay_packet` is set to false.
+For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) and [this specific commit](https://github.com/masterking32/TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) for version 3.3.5. These resources will guide you on how to make custom changes to your core to support handling and parsing of the relay packet.
 
-Here is an example of how we implemented packet support and parsed it in our code. [Example code (Javascript)](https://github.com/masterking32/WoW-Server-Relay/blob/3dd04460b4061ad9a081239206b80256514b4e0b/AuthSession.js#L226)
+If your core doesn't have a handler for these packets, make sure `send_relay_packet` is set to false.
 
 ### Additional Information:
 

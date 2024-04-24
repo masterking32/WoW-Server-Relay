@@ -242,17 +242,16 @@ class AuthSession {
     return output;
   }
 
-  // TODO: We need to implement this function for TrinityCore and AzerothCore
   // ? With this custom packet we can get the real user IP and forward it to the main server
   // ? Then if you ban the user, you can ban the user by IP without any problems!
   async HandleRelayServerCommand(data) {
-    const secret_key_length = await data.readUInt32LE(0);
+    const secret_key_length = await data.readUInt16LE(0);
+    const client_ip_length = await data.readUInt16LE(2);
     const secret_key = await data.toString("utf8", 4, 4 + secret_key_length);
-    const client_ip_length = await data.readUInt32LE(4 + secret_key_length);
     const client_ip = await data.toString(
       "utf8",
-      8 + secret_key_length,
-      8 + secret_key_length + client_ip_length
+      4 + secret_key_length,
+      4 + secret_key_length + client_ip_length
     );
 
     this.logger.debug(
@@ -269,7 +268,7 @@ class AuthSession {
       secret_key: secret_key,
       client_ip_length: client_ip_length,
       client_ip: client_ip,
-      position: 8 + secret_key_length + client_ip_length,
+      position: 4 + secret_key_length + client_ip_length,
     };
 
     return output;
