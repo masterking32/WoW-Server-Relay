@@ -42,9 +42,9 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | Offset | Size | Type   | Name       | Description                                                    |
 | ------ | ---- | ------ | ---------- | -------------------------------------------------------------- |
 | 0x0    | 1    | uint8  | OpCode     | Opcode for relay custom packet. `RELAY_SERVER_CMD_AUTH = 0x64` |
-| 0x1    | 4    | uint32 | Secret_Len | Secret key length                                              |
+| 0x1    | 2    | uint16 | Secret_Len | Secret key length                                              |
+| 0x3    | 2    | uint16 | IP_len     | The length of user IP                                          |
 | 0x5    | -    | String | Secret_Key | The secret key value starts from 0x5 and ends with Secret_Len  |
-| -      | 4    | uint32 | IP_len     | The length of user IP                                          |
 | -      | -    | String | User_IP    | User IP address                                                |
 
 #### Packet Structure for WorldServer
@@ -52,9 +52,9 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | Offset | Size | Type   | Name       | Description                                                      |
 | ------ | ---- | ------ | ---------- | ---------------------------------------------------------------- |
 | 0x0    | 2    | uint16 | OpCode     | Opcode for relay custom packet. `RELAY_SERVER_CMD_WORLD = 0xA32` |
-| 0x2    | 4    | uint32 | Secret_Len | Secret key length                                                |
-| 0x6    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len    |
-| -      | 4    | uint32 | IP_len     | The length of user IP                                            |
+| 0x2    | 2    | uint16 | Secret_Len | Secret key length                                                |
+| 0x4    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len    |
+| -      | 2    | uint16 | IP_len     | The length of user IP                                            |
 | -      | -    | String | User_IP    | User IP address                                                  |
 
 #### Does TrinityCore/AzerothCore support this packet?

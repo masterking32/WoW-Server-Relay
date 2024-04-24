@@ -31,6 +31,36 @@ class RelayServer {
     this.logger = new Logger(options);
     this.config = config;
 
+    if (this.config.secret_key.length > 64) {
+      this.logger.error(
+        "Unable to start the server. The secret key length is too long. The maximum length is 64 characters."
+      );
+
+      process.exit(1);
+    }
+
+    if (this.config.send_relay_packet && this.config.secret_key.length < 1) {
+      this.logger.error(
+        "Unable to start the server. The secret key is required when send_relay_packet is enabled. Please set the secret key in the config file."
+      );
+      this.logger.error(
+        "Please note: The secret key should be the same as the main server's secret key, and the recommended length is between 32 and 64 characters."
+      );
+
+      process.exit(1);
+    }
+
+    if (this.config.send_relay_packet && this.config.secret_key === "secret") {
+      this.logger.error(
+        "The secret key is set to the default value. Please change the secret key in the config file."
+      );
+      this.logger.error(
+        "Please note: The secret key should be the same as the main server's secret key, and the recommended length is between 32 and 64 characters."
+      );
+
+      process.exit(1);
+    }
+
     this.auth_server = Net.createServer((socket) => {
       this.logger.info(
         `New connection from ${socket.remoteAddress} to auth server`

@@ -36,21 +36,21 @@ class AuthClient {
 
       if (this.send_relay_packet) {
         let relay_packet = Buffer.alloc(
-          this.secret_key.length + this.client_ip.length + 9
+          this.secret_key.length + this.client_ip.length + 5
         );
         relay_packet.writeUInt8(RELAY_SERVER_CMD_AUTH, 0);
-        relay_packet.writeUInt32LE(this.secret_key.length, 1);
+        relay_packet.writeUint16LE(this.secret_key.length, 1);
+        relay_packet.writeUint16LE(this.client_ip.length, 3);
         relay_packet.write(this.secret_key, 5);
-        relay_packet.writeUInt32LE(
-          this.client_ip.length,
-          5 + this.secret_key.length
-        );
-        relay_packet.write(this.client_ip, 9 + this.secret_key.length);
+        relay_packet.write(this.client_ip, 5 + this.secret_key.length);
         this.socket.write(relay_packet);
         this.logger.debug(
-          `[AuthClient] Sent Relay Packet: ${relay_packet.toString("hex")}`
+          `[AuthClient] Sent Relay Packet: ${relay_packet.toString(
+            "hex"
+          )}, length: ${relay_packet.length} bytes`
         );
       }
+
       this.socket.write(this.authChallengePayload);
       this.logger.debug(
         `[AuthClient] Sent Auth Challenge Payload: ${this.authChallengePayload.toString()}`
