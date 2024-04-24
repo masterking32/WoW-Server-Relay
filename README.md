@@ -4,7 +4,7 @@ This project enables the creation of additional servers that function as a Conte
 
 ### ⭐ If you find this project useful, feel free to give it a star! ⭐
 
-This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the REALMLIST_PACKET to replace the main server IP with the relay IP. Contributions are welcome.
+This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the `REALMLIST_PACKET` to replace the main server IP with the relay IP. Contributions are welcome.
 
 ## How It Works?
 
@@ -12,15 +12,18 @@ This project reads and handles packets from the client for AuthServer and functi
 
 # Why Should We Use This Tool and What Makes It Different?
 
-### 1) Does adding another node in the network increase ping?
-
+<details>
+<summary><h3>1) Does adding another node in the network increase ping?</h3></summary>
 Contrary to what some may believe, adding another node can actually decrease ping for users. For instance, if your server is located in the EU, but you have players in North and South America, each player will have a different network route to the EU. If you establish a server in the US with a better route to your EU server, players can connect to your US server. This server will then forward packets via the better route, resulting in improved ping for players.
+</details>
 
-### 2) How does it mitigate DDoS attacks?
-
+<details>
+<summary><h3>2) How does it mitigate DDoS attacks?</h3></summary>
 Most DDoS attacks utilize packet types such as UDP, ACK, SYN, etc. This tool does not forward all types of these attacks to your main server. By implementing rate limits on your UFW/IPtable, you can further protect your main server from DDoS attacks. If one of your servers is under attack, some users connected to that server may get disconnected, but others can still play. While this tool can help mitigate the effects of DDoS attacks, it does not provide 100% protection. It simply adds an additional layer of network security.
+</details>
 
-### 3) Why should we use this instead of Load Balancers, IPTable forwards, and other proxy tools?
+<details>
+<summary><h3>3) Why should we use this instead of Load Balancers, IPTable forwards, and other proxy tools?</h3></summary>
 
 #### Issue 1:
 
@@ -62,6 +65,7 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | ------ | ---- | ------ | ---------- | ----------------------------------------------------------------------------------------- |
 | 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. `(Null terminated string)` |
 | -      | -    | String | User_IP    | User IP address. `(Null terminated string)`                                               |
+</details>
 
 ---
 
@@ -75,7 +79,9 @@ For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https
 
 This section is not ready yet. You can implement it similarly to TrinityCore, with some modifications. If you manage to do it, please let me know so we can update this part.
 
-Please Note: If you haven't made any custom changes to the core, ensure that `send_relay_packet` is set to `false`. If you have made custom changes, set `send_relay_packet` to `true` and establish a secure `secret_key` that is between 32 to 64 characters long (the maximum allowed value is 64). This `secret_key` should be the same in both this project's `config.js` file and your core configuration files, `authserver.conf` and `worldserver.conf`.
+---
+
+**Please Note: If you haven't made any custom changes to the core, ensure that `send_relay_packet` is set to `false`. If you have made custom changes, set `send_relay_packet` to `true` and establish a secure `secret_key` that is between 32 to 64 characters long (the maximum allowed value is 64). This `secret_key` should be the same in both this project's `config.js` file and your core configuration files, `authserver.conf` and `worldserver.conf`.**
 
 ---
 
@@ -129,7 +135,7 @@ Please Note: If you haven't made any custom changes to the core, ensure that `se
    pm2 save
    ```
 
-Note: For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
+**Note:** For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
 
 ---
 
@@ -143,7 +149,7 @@ Note: For optimal performance, support for real user IP, and to ensure the IP ba
 6. Run the command `node app.js`.
 7. Ensure that the necessary ports are open in your firewall.
 
-Note: For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
+**Note:** For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
 
 ---
 
