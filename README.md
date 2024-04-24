@@ -85,12 +85,12 @@ This section is not ready yet. You can implement it similarly to TrinityCore, wi
 
 ---
 
-# Installation Guide for Ubuntu
+# Installation Guide for Ubuntu/Debian
 
 1. **Install the required packages:**
 
    ```bash
-   apt install curl git nano
+   apt install curl git nano sudo
    ```
 
 2. **Install NodeJS (version 20 or higher):**
