@@ -73,7 +73,11 @@ class RelayServer {
     for (let realm of config.realms) {
       this.realms[realm.realm_id] = Net.createServer((socket) => {
         this.logger.info(
-          `New connection from ${socket.remoteAddress} to realm "${realm.realm_name}"`
+          `New connection from ${
+            socket.remoteAddress.includes("::ffff:")
+              ? socket.remoteAddress.replace("::ffff:", "")
+              : socket.remoteAddress
+          } to realm "${realm.realm_name}"`
         );
 
         let session = new RealmSession(

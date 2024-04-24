@@ -49,13 +49,19 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 
 #### Packet Structure for WorldServer
 
-| Offset | Size | Type   | Name       | Description                                                      |
-| ------ | ---- | ------ | ---------- | ---------------------------------------------------------------- |
-| 0x0    | 2    | uint16 | OpCode     | Opcode for relay custom packet. `RELAY_SERVER_CMD_WORLD = 0xA32` |
-| 0x2    | 2    | uint16 | Secret_Len | Secret key length                                                |
-| 0x4    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len    |
-| -      | 2    | uint16 | IP_len     | The length of user IP                                            |
-| -      | -    | String | User_IP    | User IP address                                                  |
+#### HEADER
+
+| Offset | Size | Type   | Name | Description                                                                                 |
+| ------ | ---- | ------ | ---- | ------------------------------------------------------------------------------------------- |
+| 0x0    | 2    | uint16 | Size | Packet Header - Size of Packet (Size of the packet including the opcode field.)             |
+| 0x2    | 4    | uint32 | CMD  | Packet Header - Opcode or Command for relay custom packet. `RELAY_SERVER_CMD_WORLD = 0xA32` |
+
+#### BODY
+
+| Offset | Size | Type   | Name       | Description                                                                              |
+| ------ | ---- | ------ | ---------- | ---------------------------------------------------------------------------------------- | --- |
+| 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. (Null terminated string.) |
+| -      | -    | String | User_IP    | User IP address. (Null terminated string.)                                               |     |
 
 #### Does TrinityCore/AzerothCore support this packet?
 
