@@ -157,9 +157,6 @@ class AuthClient {
       return { position: position, payload: packet };
     } else {
       // fail
-      setTimeout(() => {
-        this.stop();
-      }, 500);
       return false;
     }
   }
