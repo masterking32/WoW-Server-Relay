@@ -58,10 +58,10 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 
 #### BODY
 
-| Offset | Size | Type   | Name       | Description                                                                              |
-| ------ | ---- | ------ | ---------- | ---------------------------------------------------------------------------------------- |
-| 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. (Null terminated string.) |
-| -      | -    | String | User_IP    | User IP address. (Null terminated string.)                                               |
+| Offset | Size | Type   | Name       | Description                                                                               |
+| ------ | ---- | ------ | ---------- | ----------------------------------------------------------------------------------------- |
+| 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. `(Null terminated string)` |
+| -      | -    | String | User_IP    | User IP address. `(Null terminated string)`                                               |
 
 #### Does TrinityCore/AzerothCore support this packet?
 
