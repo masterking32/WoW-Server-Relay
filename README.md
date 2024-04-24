@@ -4,11 +4,11 @@ This project enables the creation of additional servers that function as a Conte
 
 ### ⭐ If you find this project useful, feel free to give it a star! ⭐
 
+This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the REALMLIST_PACKET to replace the main server IP with the relay IP. Contributions are welcome.
+
 ## How It Works?
 
 ![How it Works?](https://raw.githubusercontent.com/masterking32/WoW-Server-Relay/main/docs/how-works.png)
-
-Please note that this project is still under development. While it is fully functional, there may be some issues and unsupported packet types for the AuthServer that need to be implemented.
 
 # Why Should We Use This Tool and What Makes It Different?
 
@@ -63,6 +63,8 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. `(Null terminated string)` |
 | -      | -    | String | User_IP    | User IP address. `(Null terminated string)`                                               |
 
+---
+
 ## Does TrinityCore/AzerothCore support this packet?
 
 - ## TrinityCore Custom Changes:
@@ -73,13 +75,7 @@ For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https
 
 This section is not ready yet. You can implement it similarly to TrinityCore, with some modifications. If you manage to do it, please let me know so we can update this part.
 
----
-
-If your core doesn't have a handler for these packets, make sure `send_relay_packet` is set to false.
-
-### Additional Information:
-
-This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the REALMLIST_PACKET to replace the main server IP with the relay IP. This project is currently in beta and testing stages. Contributions are welcome.
+Please Note: If you haven't made any custom changes to the core, ensure that `send_relay_packet` is set to `false`. If you have made custom changes, set `send_relay_packet` to `true` and establish a secure `secret_key` that is between 32 to 64 characters long (the maximum allowed value is 64). This `secret_key` should be the same in both this project's `config.js` file and your core configuration files, `authserver.conf` and `worldserver.conf`.
 
 ---
 
@@ -146,6 +142,8 @@ Note: For optimal performance, support for real user IP, and to ensure the IP ba
 5. Open the `Command Prompt`, navigate to the project directory.
 6. Run the command `node app.js`.
 7. Ensure that the necessary ports are open in your firewall.
+
+Note: For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
 
 ---
 
