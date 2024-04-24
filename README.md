@@ -4,7 +4,7 @@ This project enables the creation of additional servers that function as a Conte
 
 ### ⭐ If you find this project useful, feel free to give it a star! ⭐
 
-## How It Works
+## How It Works?
 
 ![How it Works?](https://raw.githubusercontent.com/masterking32/WoW-Server-Relay/main/docs/how-works.png)
 
@@ -63,9 +63,17 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | 0x0    | -    | String | Secret_Key | The secret key value starts from 0x6 and ends with Secret_Len. `(Null terminated string)` |
 | -      | -    | String | User_IP    | User IP address. `(Null terminated string)`                                               |
 
-#### Does TrinityCore/AzerothCore support this packet?
+## Does TrinityCore/AzerothCore support this packet?
+
+- ## TrinityCore Custom Changes:
 
 For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) and [this specific commit](https://github.com/masterking32/TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) for version 3.3.5. These resources will guide you on how to make custom changes to your core to support handling and parsing of the relay packet.
+
+- ## AzerothCore Custom Changes/Module:
+
+This section is not ready yet. You can implement it similarly to TrinityCore, with some modifications. If you manage to do it, please let me know so we can update this part.
+
+---
 
 If your core doesn't have a handler for these packets, make sure `send_relay_packet` is set to false.
 
@@ -73,7 +81,9 @@ If your core doesn't have a handler for these packets, make sure `send_relay_pac
 
 This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the REALMLIST_PACKET to replace the main server IP with the relay IP. This project is currently in beta and testing stages. Contributions are welcome.
 
-## Installation Guide for Ubuntu
+---
+
+# Installation Guide for Ubuntu
 
 1. **Install the required packages:**
 
@@ -122,6 +132,18 @@ This project reads and handles packets from the client for AuthServer and functi
    pm2 startup
    pm2 save
    ```
+
+# Windows Installation:
+
+1. Download and install the latest version of [NodeJS](https://nodejs.org/en).
+2. Download the project and extract the files.
+3. Navigate to the project directory and rename `config.js.sample` to `config.js`.
+4. Modify the `config.js` file with your server information.
+5. Open the `Command Prompt`, navigate to the project directory.
+6. Run the command `node app.js`.
+7. Ensure that the necessary ports are open in your firewall.
+
+---
 
 ## Developer Information
 
