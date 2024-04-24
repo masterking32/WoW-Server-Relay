@@ -13,17 +13,17 @@ This project reads and handles packets from the client for AuthServer and functi
 # Why Should We Use This Tool and What Makes It Different?
 
 <details>
-<summary><h3>1) Does adding another node in the network increase ping?</h3></summary>
+<summary><h4>1) Does adding another node in the network increase ping?</h4></summary>
 Contrary to what some may believe, adding another node can actually decrease ping for users. For instance, if your server is located in the EU, but you have players in North and South America, each player will have a different network route to the EU. If you establish a server in the US with a better route to your EU server, players can connect to your US server. This server will then forward packets via the better route, resulting in improved ping for players.
 </details>
 
 <details>
-<summary><h3>2) How does it mitigate DDoS attacks?</h3></summary>
+<summary><h4>2) How does it mitigate DDoS attacks?</h4></summary>
 Most DDoS attacks utilize packet types such as UDP, ACK, SYN, etc. This tool does not forward all types of these attacks to your main server. By implementing rate limits on your UFW/IPtable, you can further protect your main server from DDoS attacks. If one of your servers is under attack, some users connected to that server may get disconnected, but others can still play. While this tool can help mitigate the effects of DDoS attacks, it does not provide 100% protection. It simply adds an additional layer of network security.
 </details>
 
 <details>
-<summary><h3>3) Why should we use this instead of Load Balancers, IPTable forwards, and other proxy tools?</h3></summary>
+<summary><h4>3) Why should we use this instead of Load Balancers, IPTable forwards, and other proxy tools?</h4></summary>
 
 #### Issue 1:
 
