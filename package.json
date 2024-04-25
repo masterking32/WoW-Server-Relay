@@ -2,7 +2,7 @@
   "name": "wow-relay-server",
   "version": "1.0.0",
   "description": "This is a Relay Server for World of Warcraft, designed to function as a Content Delivery Network (CDN) for the game. It conceals the actual server IP to safeguard it from DDoS attacks. Additionally, it enhances the ping for players, providing a smoother gaming experience.",
-  "main": "relay.js",
+  "main": "app.js",
   "type": "module",
   "author": "masterking32",
   "dependencies": {
