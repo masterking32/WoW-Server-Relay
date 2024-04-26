@@ -75,7 +75,7 @@ Si habilita `send_relay_packet` en el archivo de configuración, este proyecto e
 
 - ## Cambios personalizados de TrinityCore:
 
-Para TrinityCore, puede consultar [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) y [este compromiso específico](https://github.com/masterking32/ TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) para la versión 3.3.5. Estos recursos lo guiarán sobre cómo realizar cambios personalizados en su núcleo para admitir el manejo y análisis del paquete de retransmisión.
+Para TrinityCore, puede consultar [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) y [este compromiso específico](https://github.com/masterking32/TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) para la versión 3.3.5. Estos recursos lo guiarán sobre cómo realizar cambios personalizados en su núcleo para admitir el manejo y análisis del paquete de retransmisión.
 
 - ## Módulo/cambios personalizados de AzerothCore:
 
