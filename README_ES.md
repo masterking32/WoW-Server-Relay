@@ -1,18 +1,18 @@
-# World of Warcraft (WoW) Relay Server
+# World of Warcraft (WoW) Servidor de retransmisión
 
-[English](README.md) | [Spanish](README_ES.md)
+[Ingles](README.md) | [Español](README_ES.md)
 
-This project enables the creation of additional servers that function as a Content Delivery Network (CDN) for World of Warcraft private servers. It allows you to conceal your main server IP from users. Players connect to the relay servers, which then handle and forward packets to the main server. This setup not only protects your main server from DDoS attacks but also provides a smoother gameplay experience by having CDNs at different locations.
+Este proyecto permite la creación de servidores adicionales que funcionan como una Red de Entrega de Contenido (CDN) para servidores privados de World of Warcraft. Le permite ocultar la IP de su servidor principal a los usuarios. Los jugadores se conectan a los servidores de retransmisión, que luego manejan y reenvían paquetes al servidor principal. Esta configuración no solo protege su servidor principal de ataques DDoS, sino que también brinda una experiencia de juego más fluida al tener CDN en diferentes ubicaciones.
 
-### ⭐ If you find this project useful, feel free to give it a star! ⭐
+### ⭐ Si encuentra útil este proyecto, ¡no dude en darle una estrella! ⭐
 
-This project reads and handles packets from the client for AuthServer and functions like a WoW Auth Server and WoW Client. Additionally, it edits the `REALMLIST_PACKET` to replace the main server IP with the relay IP. Contributions are welcome.
+Este proyecto lee y maneja paquetes del cliente para AuthServer y funciona como un servidor de autenticación WoW y un cliente WoW. Además, edita `REALMLIST_PACKET` para reemplazar la IP del servidor principal con la IP de retransmisión. Las contribuciones son bienvenidas.
 
-## How It Works?
+## ¿Cómo funciona?
 
 ![How it Works?](https://raw.githubusercontent.com/masterking32/WoW-Server-Relay/main/docs/how-works.png)
 
-# Why Should We Use This Tool and What Makes It Different?
+# ¿Por qué deberíamos utilizar esta herramienta y qué la hace diferente?
 
 <details>
 <summary><h4>1) Does adding another node in the network increase ping?</h4></summary>
