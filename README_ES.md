@@ -137,7 +137,7 @@ Esta sección aún no está lista. Puedes implementarlo de manera similar a Trin
    pm2 save
    ```
 
-**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección] (https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
+**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
 
 ---
 
@@ -151,7 +151,7 @@ Esta sección aún no está lista. Puedes implementarlo de manera similar a Trin
 6. Ejecute el comando `node app.js`.
 7. Asegúrese de que los puertos necesarios estén abiertos en su firewall.
 
-**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección] (https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
+**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
 
 ---
 
