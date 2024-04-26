@@ -15,34 +15,34 @@ Este proyecto lee y maneja paquetes del cliente para AuthServer y funciona como 
 # ¿Por qué deberíamos utilizar esta herramienta y qué la hace diferente?
 
 <details>
-<summary><h4>1) Does adding another node in the network increase ping?</h4></summary>
-Contrary to what some may believe, adding another node can actually decrease ping for users. For instance, if your server is located in the EU, but you have players in North and South America, each player will have a different network route to the EU. If you establish a server in the US with a better route to your EU server, players can connect to your US server. This server will then forward packets via the better route, resulting in improved ping for players.
+<summary><h4>1) ¿Agregar otro nodo en la red aumenta el ping?</h4></summary>
+Al contrario de lo que algunos puedan creer, agregar otro nodo en realidad puede disminuir el ping de los usuarios. Por ejemplo, si tu servidor está ubicado en la UE, pero tienes jugadores en América del Norte y del Sur, cada jugador tendrá una ruta de red diferente hacia la UE. Si establece un servidor en EE. UU. con una mejor ruta a su servidor de la UE, los jugadores pueden conectarse a su servidor de EE. UU. Este servidor luego reenviará los paquetes a través de la mejor ruta, lo que resultará en un ping mejorado para los jugadores.
 </details>
 
 <details>
-<summary><h4>2) How does it mitigate DDoS attacks?</h4></summary>
-Most DDoS attacks utilize packet types such as UDP, ACK, SYN, etc. This tool does not forward all types of these attacks to your main server. By implementing rate limits on your UFW/IPtable, you can further protect your main server from DDoS attacks. If one of your servers is under attack, some users connected to that server may get disconnected, but others can still play. While this tool can help mitigate the effects of DDoS attacks, it does not provide 100% protection. It simply adds an additional layer of network security.
+<summary><h4>2) ¿Cómo mitiga los ataques DDoS?</h4></summary>
+La mayoría de los ataques DDoS utilizan tipos de paquetes como UDP, ACK, SYN, etc. Esta herramienta no reenvía todos los tipos de estos ataques a su servidor principal. Al implementar límites de velocidad en su UFW/IPtable, puede proteger aún más su servidor principal de ataques DDoS. Si uno de tus servidores está siendo atacado, algunos usuarios conectados a ese servidor pueden desconectarse, pero otros aún pueden jugar. Si bien esta herramienta puede ayudar a mitigar los efectos de los ataques DDoS, no proporciona una protección del 100%. Simplemente agrega una capa adicional de seguridad de la red.
 </details>
 
 <details>
-<summary><h4>3) Why should we use this instead of Load Balancers, IPTable forwards, and other proxy tools?</h4></summary>
+<summary><h4>3) ¿Por qué deberíamos usar esto en lugar de Load Balancers, IPTable forwards y otras herramientas proxy?</h4></summary>
 
-#### Issue 1:
+#### Número 1:
 
-While you can use other tools to forward packets, load balancers, etc., it's important to understand that by default, TrinityCore/AzerothCore retrieves the user's IP from the remote socket IP. This means that when you use something like IPTable, the user's IP on the WoW server is your relay server's IP. For instance, if `us-relay1`'s IP is `8.8.8.8`, and a player connected to that server attempts the wrong password multiple times, the server will ban `8.8.8.8` instead of the user's IP. Consequently, no one can connect to the server from the `us-relay1` node. For users connected to the WoW server from the `us-relay1` node, the IP will always be `8.8.8.8`, and in the game, if you cannot retrieve the real player's IP, you will always see the relay node IPs.
+Si bien puede utilizar otras herramientas para reenviar paquetes, balanceadores de carga, etc., es importante comprender que, de forma predeterminada, TrinityCore/AzerothCore recupera la IP del usuario de la IP del socket remoto. Esto significa que cuando usas algo como IPTable, la IP del usuario en el servidor WoW es la IP de tu servidor de retransmisión. Por ejemplo, si la IP de `us-relay1` es `8.8.8.8` y un jugador conectado a ese servidor intenta ingresar la contraseña incorrecta varias veces, el servidor prohibirá `8.8.8.8` en lugar de la IP del usuario. En consecuencia, nadie puede conectarse al servidor desde el nodo `us-relay1`. Para los usuarios conectados al servidor WoW desde el nodo `us-relay1`, la IP siempre será `8.8.8.8`, y en el juego, si no puedes recuperar la IP del jugador real, siempre verás las IP del nodo de retransmisión.
 
-#### How did you fix it?
+#### ¿Cómo lo arreglaste?
 
-This project works like other forwarders by default, but with a difference: it only works for WoW and reads, parses, and handles packets. To fix the read-ip issue, we added a custom packet for WorldServer and AuthServer with these Opcodes:
+Este proyecto funciona como otros reenviadores de forma predeterminada, pero con una diferencia: solo funciona para WoW y lee, analiza y maneja paquetes. Para solucionar el problema de lectura de IP, agregamos un paquete personalizado para WorldServer y AuthServer con estos códigos de operación:
 
 ```
 RELAY_SERVER_CMD_AUTH = 0x64 // 100
 RELAY_SERVER_CMD_WORLD = 0xA32 // 2610
 ```
 
-If you enable `send_relay_packet` in the config file, this project will send a relay packet to the auth and world server after opening a socket connection. This packet includes a secret key and the real IP of the user. Your Auth and World servers need to parse this packet and replace the user IP with the IP inside this packet.
+Si habilita `send_relay_packet` en el archivo de configuración, este proyecto enviará un paquete de retransmisión al servidor mundial y de autenticación después de abrir una conexión de socket. Este paquete incluye una clave secreta y la IP real del usuario. Sus servidores Auth y World deben analizar este paquete y reemplazar la IP del usuario con la IP dentro de este paquete.
 
-#### Packet Structure for AuthServer
+#### Estructura de paquetes para AuthServer
 
 | Offset | Size | Type   | Name       | Description                                                    |
 | ------ | ---- | ------ | ---------- | -------------------------------------------------------------- |
@@ -52,16 +52,16 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 | 0x5    | -    | String | Secret_Key | The secret key value starts from 0x5 and ends with Secret_Len  |
 | -      | -    | String | User_IP    | User IP address                                                |
 
-#### Packet Structure for WorldServer
+#### Estructura de paquetes para WorldServer
 
-#### HEADER
+#### ENCABEZADO
 
 | Offset | Size | Type   | Name | Description                                                                                 |
 | ------ | ---- | ------ | ---- | ------------------------------------------------------------------------------------------- |
 | 0x0    | 2    | uint16 | Size | Packet Header - Size of Packet (Size of the packet including the opcode field.)             |
 | 0x2    | 4    | uint32 | CMD  | Packet Header - Opcode or Command for relay custom packet. `RELAY_SERVER_CMD_WORLD = 0xA32` |
 
-#### BODY
+#### CUERPO
 
 | Offset | Size | Type   | Name       | Description                                                                               |
 | ------ | ---- | ------ | ---------- | ----------------------------------------------------------------------------------------- |
@@ -71,19 +71,19 @@ If you enable `send_relay_packet` in the config file, this project will send a r
 
 ---
 
-## Does TrinityCore/AzerothCore support this packet?
+## ¿TrinityCore/AzerothCore admite este paquete?
 
-- ## TrinityCore Custom Changes:
+- ## Cambios personalizados de TrinityCore:
 
-For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) and [this specific commit](https://github.com/masterking32/TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) for version 3.3.5. These resources will guide you on how to make custom changes to your core to support handling and parsing of the relay packet.
+Para TrinityCore, puede consultar [masterking32/TrinityCore-Relay-Support](https://github.com/masterking32/TrinityCore-Relay-Support) y [este compromiso específico](https://github.com/masterking32/ TrinityCore-Relay-Support/commit/cb5aa9eefd4caec032864b9249fd16341ab64b73) para la versión 3.3.5. Estos recursos lo guiarán sobre cómo realizar cambios personalizados en su núcleo para admitir el manejo y análisis del paquete de retransmisión.
 
-- ## AzerothCore Custom Changes/Module:
+- ## Módulo/cambios personalizados de AzerothCore:
 
-This section is not ready yet. You can implement it similarly to TrinityCore, with some modifications. If you manage to do it, please let me know so we can update this part.
+Esta sección aún no está lista. Puedes implementarlo de manera similar a TrinityCore, con algunas modificaciones. Si logra hacerlo, hágamelo saber para que podamos actualizar esta parte.
 
 ---
 
-**Please Note: If you haven't made any custom changes to the core, ensure that `send_relay_packet` is set to `false`. If you have made custom changes, set `send_relay_packet` to `true` and establish a secure `secret_key` that is between 32 to 64 characters long (the maximum allowed value is 64). This `secret_key` should be the same in both this project's `config.js` file and your core configuration files, `authserver.conf` and `worldserver.conf`.**
+**Tenga en cuenta: si no ha realizado ningún cambio personalizado en el núcleo, asegúrese de que `send_relay_packet` esté configurado en `false`. Si ha realizado cambios personalizados, establezca `send_relay_packet` en `true` y establezca una `secret_key` segura que tenga entre 32 y 64 caracteres (el valor máximo permitido es 64). Esta `clave_secreta` debe ser la misma tanto en el archivo `config.js` de este proyecto como en sus archivos de configuración principales, `authserver.conf` y `worldserver.conf`.**
 
 ---
 
