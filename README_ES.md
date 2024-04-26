@@ -87,48 +87,48 @@ Esta sección aún no está lista. Puedes implementarlo de manera similar a Trin
 
 ---
 
-# Installation Guide for Ubuntu/Debian
+# Guía de instalación para Ubuntu/Debian
 
-1. **Install the required packages:**
+1. **Instale los paquetes necesarios:**
 
    ```bash
    apt install curl git nano sudo
    ```
 
-2. **Install NodeJS (version 20 or higher):**
+2. **Instale NodeJS (versión 20 o superior):**
 
    ```bash
    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
    sudo apt-get install -y nodejs
    ```
 
-3. **Download the project:**
+3. **Clone el proyecto:**
 
    ```bash
    git clone https://github.com/masterking32/WoW-Server-Relay
    cd WoW-Server-Relay
    ```
 
-4. **Install NPM Packages:**
+4. **Instalar dependencias (npm):**
 
    ```bash
    npm install
    ```
 
-5. **Configure the project:**
+5. **Configurar el proyecto:**
 
    ```bash
    cp config.js.sample config.js
    nano config.js
    ```
 
-6. **Run the project:**
+6. **Ejecute el proyecto:**
 
    ```bash
    node app.js
    ```
 
-7. **Run as Service/Startup:**
+7. **Ejecutar como servicio/inicio:**
 
    ```bash
    npm install pm2 -g
@@ -137,24 +137,24 @@ Esta sección aún no está lista. Puedes implementarlo de manera similar a Trin
    pm2 save
    ```
 
-**Note:** For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
+**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección] (https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
 
 ---
 
-# Windows Installation:
+# Instalación en Windows:
 
-1. Download and install the latest version of [NodeJS](https://nodejs.org/en).
-2. Download the project and extract the files.
-3. Navigate to the project directory and rename `config.js.sample` to `config.js`.
-4. Modify the `config.js` file with your server information.
-5. Open the `Command Prompt`, navigate to the project directory.
-6. Run the command `node app.js`.
-7. Ensure that the necessary ports are open in your firewall.
+1. Descargue e instale la última versión de [NodeJS](https://nodejs.org/en).
+2. Descargue el proyecto y extraiga los archivos.
+3. Navegue hasta el directorio del proyecto y cambie el nombre de `config.js.sample` a `config.js`.
+4. Modifique el archivo `config.js` con la información de su servidor.
+5. Abra el `Símbolo del sistema`, navegue hasta el directorio del proyecto.
+6. Ejecute el comando `node app.js`.
+7. Asegúrese de que los puertos necesarios estén abiertos en su firewall.
 
-**Note:** For optimal performance, support for real user IP, and to ensure the IP ban function works on your server, you need to make some modifications to your core. Please read [this section](https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) and apply the necessary changes to your core.
+**Nota:** Para un rendimiento óptimo, soporte para IP de usuario real y para garantizar que la función de prohibición de IP funcione en su servidor, debe realizar algunas modificaciones en su núcleo. Lea [esta sección] (https://github.com/masterking32/WoW-Server-Relay?tab=readme-ov-file#does-trinitycoreazerothcore-support-this-packet) y aplique los cambios necesarios a su núcleo.
 
 ---
 
-## Developer Information
+## Información del desarrollador
 
-This project was developed by [Amin.MasterkinG](https://masterking32.com). You can also find me on [Github](https://github.com/masterking32).
+Este proyecto fue desarrollado por [Amin.MasterkinG](https://masterking32.com). También puedes encontrarme en [Github](https://github.com/masterking32).
