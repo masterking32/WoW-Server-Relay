@@ -79,7 +79,7 @@ For TrinityCore, you can refer to [masterking32/TrinityCore-Relay-Support](https
 
 - ## AzerothCore Custom Changes/Module:
 
-This section is not ready yet. You can implement it similarly to TrinityCore, with some modifications. If you manage to do it, please let me know so we can update this part.
+[Check these changes for AzerothCore](https://github.com/azerothcore/azerothcore-wotlk/pull/19998/files)
 
 ---
 
