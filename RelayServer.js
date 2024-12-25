@@ -75,7 +75,7 @@ class RelayServer {
         const remoteAddress = socket.remoteAddress;
         this.logger.info(
           `New connection from ${
-            remoteAddress.includes("::ffff:")
+            remoteAddress && remoteAddress.includes("::ffff:")
               ? remoteAddress.replace("::ffff:", "")
               : remoteAddress
           } to realm "${realm.realm_name}"`
