@@ -3,7 +3,7 @@
 [English](README.md) | [Spanish](README_ES.md)
 
 > **⚠️ Academic & Research Disclaimer:**
-> This repository is a **Proof of Concept (PoC)** developed strictly for **educational purposes, network engineering research, and studying TCP/UDP packet routing**. It demonstrate
+> This repository is a **Proof of Concept (PoC)** developed strictly for **educational purposes, network engineering research, and studying TCP/UDP packet routing**. It demonstrates how to build a distributed Edge/CDN layer for legacy MMORPG protocols. The World of Warcraft (WoW) protocol was solely used as an open-source test environment (via TrinityCore/AzerothCore) to validate the architecture. This tool is non-commercial and is not intended to facilitate unauthorized game servers or violate any intellectual property rights.
 
 This project enables the creation of additional servers that function as a Content Delivery Network (CDN) for World of Warcraft private servers. It allows you to conceal your main server IP from users. Players connect to the relay servers, which then handle and forward packets to the main server. This setup not only protects your main server from DDoS attacks but also provides a smoother gameplay experience by having CDNs at different locations.
 
